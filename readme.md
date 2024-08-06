@@ -5,6 +5,7 @@
    </a>
 </div>
 <br/>
+
 # Stable Diffusion API & Image processing tools API
 
 This project provides a set of image processing services using various models, including style transfer, text-to-image generation, and object removal. The application is built with FastAPI and utilizes several image processing models.
@@ -38,8 +39,16 @@ This project provides a set of image processing services using various models, i
     ```bash
     pip install -r requirements.txt
     ```
+## Download MIGAN models
 Download pre-trained MI-GAN models from [here](https://drive.google.com/drive/folders/1xNtvN2lto0p5yFKOEEg9RioMjGrYM74w?usp=share_link) and put into `./models/migan` directory.
 If you also want to test with Co-Mod-GAN models, download pre-trained models from [here](https://drive.google.com/drive/folders/1VATyNQQJW2VpuHND02bc-3_4ukJMHQ44?usp=share_link) and put into `./models` directory.
+
+## Download Inpainting model
+Clone PowerPaints Model
+git lfs clone https://huggingface.co/JunhaoZhuang/PowerPaint_v2/ ./checkpoints/ppt-v2
+
+Refactor files in pwrpaint/checkpoints/ppt-v2/realisticVisionV60B1_v51VAE/unet : remove -2 on the name if any
+
 
 ## Running the Application
 
@@ -54,28 +63,28 @@ The server will be available at http://localhost:5000.
 ## API Endpoints
 1. Style Transfer
 
-    * Endpoint: `/vgg9/style-transfer`\
-    * Method: POST\
-    * Parameters:\
-        * content_image (required): Image file to apply style to.\
+    * Endpoint: `/vgg9/style-transfer`
+    * Method: POST
+    * Parameters:
+        * content_image (required): Image file to apply style to.
         * style_image (optional): Image file with the style. 
 
 2. Text-to-Image Generation
 
-    * Endpoint: /text2img\
-    * Method: POST\
-    * Parameters:\
+    * Endpoint: /text2img
+    * Method: POST
+    * Parameters:
         * model (required): The model to use (stabilityai/stable-diffusion-xl-base-1.0 or stabilityai/stable-diffusion-3-medium-diffusers).\
         * prompt (required): Text prompt for image generation.
 
 3. Object Removal
 
-    * Endpoint: /remove-object\
-    * Method: POST\
-    * Parameters:\
-        * image (required): Image file with objects to be removed.\
-        * mask (required): Mask file indicating objects to be removed.\
-        * model (optional): Model to use for object removal.\
+    * Endpoint: /remove-object
+    * Method: POST
+    * Parameters:
+        * image (required): Image file with objects to be removed.
+        * mask (required): Mask file indicating objects to be removed.
+        * model (optional): Model to use for object removal.
           *  migan-256-places2: **good**
           *  migan-512-places2: **good**
           *  migan-256-ffhq: **good**
@@ -83,19 +92,19 @@ The server will be available at http://localhost:5000.
           *  comodgan-512-places2: **good**
           *  comodgan-256-ffhq: **good**
           *  powerpaintv2: **sometimes unacurate due to difusion model version**
-        * threshold (optional): Threshold for object removal.\
-        * prompt (optional): Prompt for object removal.\
+        * threshold (optional): Threshold for object removal.
+        * prompt (optional): Prompt for object removal.
         * negative_prompt (optional): Negative prompt for object removal.
     
 4. Image Inpainting
 
-    * Endpoint: /image-inpaint\
-    * Method: POST\
-    * Parameters:\
-        * image (required): Image file with areas to be inpainted.\
-        * mask (required): Mask file indicating areas to be inpainted.\        model (required): Model to use for inpainting.
-        * threshold (optional): Threshold for inpainting.\
-        * prompt (optional): Prompt for inpainting.\
+    * Endpoint: /image-inpaint
+    * Method: POST
+    * Parameters:
+        * image (required): Image file with areas to be inpainted.
+        * mask (required): Mask file indicating areas to be inpainted.        model (required): Model to use for inpainting.
+        * threshold (optional): Threshold for inpainting.
+        * prompt (optional): Prompt for inpainting.
         * negative_prompt (optional): Negative prompt for inpainting.
 
 Upgrading Models

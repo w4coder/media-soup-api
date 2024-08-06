@@ -1,9 +1,7 @@
 venv
 .venv
 .venv*
-models
-models*
-*models*
+models/migan
 
 # Cache
 __pycache__/
@@ -18,7 +16,7 @@ __pycache__/
 data
 log/
 
-checkpoints/
+checkpoints
 .ruff_cache
 pretrained_weights/
 output/
