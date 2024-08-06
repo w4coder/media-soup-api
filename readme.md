@@ -1,3 +1,10 @@
+<br/>
+<div align="center">
+   <a href="https://github.com/w4coder/MGMclient">
+    <img src="/assets/logo.svg" alt="Logo" width="80" height="80">
+   </a>
+</div>
+<br/>
 # Stable Diffusion API & Image processing tools API
 
 This project provides a set of image processing services using various models, including style transfer, text-to-image generation, and object removal. The application is built with FastAPI and utilizes several image processing models.
