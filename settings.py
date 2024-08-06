@@ -1,0 +1,6 @@
+SD3_DEVICE = "cuda:0"
+SDXL_DEVICE = "cuda:0"
+VGG19_DEVICE = "cuda:0"
+MIGAN_DEVICE = "cuda:0"
+PWRPAINT_DEVICE = "cuda:0"
+PRELOAD_MODELS = [] # exemple ["SD3","SDXL","VGG19","PWRPAINT"]
