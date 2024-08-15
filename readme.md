@@ -74,7 +74,7 @@ The server will be available at http://localhost:5000.
     * Endpoint: /text2img
     * Method: POST
     * Parameters:
-        * model (required): The model to use (stabilityai/stable-diffusion-xl-base-1.0 or stabilityai/stable-diffusion-3-medium-diffusers).\
+        * model (required): The model to use (stabilityai/stable-diffusion-xl-base-1.0 or stabilityai/stable-diffusion-3-medium-diffusers). Flux in dev mode\
         * prompt (required): Text prompt for image generation.
 
 3. Object Removal
