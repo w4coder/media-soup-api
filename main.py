@@ -3,22 +3,21 @@ import io
 import numpy as np
 import torch
 from PIL import Image
-from matplotlib import pyplot as plt
 from torchvision import transforms
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 from typing import Literal, Optional
 
 from classes import Text2ImgPayload
-from migan.migan_inference import MIGAN_OR
-from pwrpaint.pwrpt_inference import PowerPaintController
-from sd3.sd3_infernce import SD3Model
-from settings import SDXL_DEVICE, SD3_DEVICE, MIGAN_DEVICE, VGG19_DEVICE
+from models.flux.flux_infernce import FluxSchnellModel
+from models.migan.migan_inference import MIGAN_OR
+from models.pwrpaint.pwrpt_inference import PowerPaintController
+from models.sd3.sd3_infernce import SD3Model
+from settings import SDXL_DEVICE, SD3_DEVICE, MIGAN_DEVICE, VGG19_DEVICE, FLUX_DEVICE
 from utils import max_column_by_category, rgb_to_grayscale
-from vgg9.vgg9_inference import VGG9Processor
-from sdxl.sdxl_inference import SDXLModel
+from models.vgg9.vgg9_inference import VGG9Processor
+from models.sdxl.sdxl_inference import SDXLModel
 
 app = FastAPI()
 
@@ -60,11 +59,18 @@ migan_model = MIGAN_OR(
 
 # 4. PowerPaint model
 
-pwrpt_model = PowerPaintController(
-    weight_dtype=torch.float16,
-    checkpoint_dir= "pwrpaint/checkpoints/ppt-v2",
-    local_files_only=True,
-    version="ppt-v2"
+# pwrpt_model = PowerPaintController(
+#     weight_dtype=torch.float16,
+#     checkpoint_dir="models/pwrpaint/checkpoints/ppt-v2",
+#     local_files_only=True,
+#     version="ppt-v2"
+# )
+
+# 5. PowerPaint model
+
+flux_schnell_model = FluxSchnellModel(
+    base_model_path="black-forest-labs/FLUX.1-schnell",
+    device=FLUX_DEVICE,
 )
 
 class ModelManager:
@@ -91,7 +97,7 @@ manager.register_model(vgg9_model)
 manager.register_model(sdxl_model)
 manager.register_model(sd3_model)
 manager.register_model(migan_model)
-manager.register_model(pwrpt_model)
+# manager.register_model(pwrpt_model)
 
 
 #### Global instance of the model
@@ -134,6 +140,9 @@ async def sdxl_text_to_image(
         elif payload.model == "stabilityai/stable-diffusion-3-medium-diffusers":
             manager.load_new_model(sd3_model)
             output_image = sd3_model.run_sd3_text2img(prompt=payload.prompt)
+        elif payload.model == "black-forest-labs/FLUX.1-schnell":
+            manager.load_new_model(flux_schnell_model)
+            output_image = flux_schnell_model.run_flux_schnell_text2img(prompt=payload.prompt)
         else:
             raise HTTPException(status_code=400, detail="Unsupported model name")
 
@@ -189,27 +198,27 @@ async def migan_object_remove(
         elif model == "powerpaintv2":
             if not prompt:
                 raise HTTPException(status_code=400, detail="A prompt is required to guide the removal process")
-            [output_image], _ = pwrpt_model.infer(
-                input_image={
-                    "image": input_image,
-                    "mask": input_mask
-                },
-                text_guided_prompt=None,
-                text_guided_negative_prompt=None,
-                shape_guided_prompt=None,
-                shape_guided_negative_prompt=None,
-                fitting_degree=1,
-                ddim_steps=45,
-                scale=threshold or 7.5,
-                seed=1878933855,
-                task="object-removal",
-                vertical_expansion_ratio=1,
-                horizontal_expansion_ratio=1,
-                outpaint_prompt=None,
-                outpaint_negative_prompt=None,
-                removal_prompt=prompt,
-                removal_negative_prompt=negative_prompt,
-            )
+            # [output_image], _ = pwrpt_model.infer(
+            #     input_image={
+            #         "image": input_image,
+            #         "mask": input_mask
+            #     },
+            #     text_guided_prompt=None,
+            #     text_guided_negative_prompt=None,
+            #     shape_guided_prompt=None,
+            #     shape_guided_negative_prompt=None,
+            #     fitting_degree=1,
+            #     ddim_steps=45,
+            #     scale=threshold or 7.5,
+            #     seed=1878933855,
+            #     task="object-removal",
+            #     vertical_expansion_ratio=1,
+            #     horizontal_expansion_ratio=1,
+            #     outpaint_prompt=None,
+            #     outpaint_negative_prompt=None,
+            #     removal_prompt=prompt,
+            #     removal_negative_prompt=negative_prompt,
+            # )
         else:
             raise HTTPException(status_code=400, detail="Unsupported model name")
 
@@ -261,27 +270,27 @@ async def migan_object_remove(
         if model == "powerpaintv2":
             if not prompt:
                 raise HTTPException(status_code=400, detail="A prompt is required to guide the removal process")
-            [output_image], _ = pwrpt_model.infer(
-                input_image={
-                    "image": input_image,
-                    "mask": input_mask
-                },
-                text_guided_prompt=prompt,
-                text_guided_negative_prompt=negative_prompt,
-                shape_guided_prompt=None,
-                shape_guided_negative_prompt=None,
-                fitting_degree=1,
-                ddim_steps=45,
-                scale=threshold,
-                seed=1878933855,
-                task="text-guided",
-                vertical_expansion_ratio=1,
-                horizontal_expansion_ratio=1,
-                outpaint_prompt=None,
-                outpaint_negative_prompt=None,
-                removal_prompt=None,
-                removal_negative_prompt=None,
-            )
+            # [output_image], _ = pwrpt_model.infer(
+            #     input_image={
+            #         "image": input_image,
+            #         "mask": input_mask
+            #     },
+            #     text_guided_prompt=prompt,
+            #     text_guided_negative_prompt=negative_prompt,
+            #     shape_guided_prompt=None,
+            #     shape_guided_negative_prompt=None,
+            #     fitting_degree=1,
+            #     ddim_steps=45,
+            #     scale=threshold,
+            #     seed=1878933855,
+            #     task="text-guided",
+            #     vertical_expansion_ratio=1,
+            #     horizontal_expansion_ratio=1,
+            #     outpaint_prompt=None,
+            #     outpaint_negative_prompt=None,
+            #     removal_prompt=None,
+            #     removal_negative_prompt=None,
+            # )
         else:
             raise HTTPException(status_code=400, detail="Unsupported model name")
 
@@ -290,7 +299,7 @@ async def migan_object_remove(
         # output_image = transforms.ToPILImage()(output_image)
 
         output_buffer = io.BytesIO()
-        output_image.save(output_buffer, format='PNG')
+        # output_image.save(output_buffer, format='PNG')
         output_buffer.seek(0)
 
         return StreamingResponse(output_buffer, media_type="image/png")
