@@ -6,7 +6,8 @@
 </div>
 <br/>
 
-# Stable Diffusion API & Image processing tools API
+# Stable Diffusion API & Image processing tools API![Capture d’écran 2024-08-15 173743](https://github.com/user-attachments/assets/2800aa0c-e342-4399-89ec-d288679e0870)
+
 
 This project provides a set of image processing services using various models, including style transfer, text-to-image generation, and object removal. The application is built with FastAPI and utilizes several image processing models.
 
